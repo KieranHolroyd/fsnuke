@@ -1,0 +1,60 @@
+{
+  "name": "nodekill",
+  "description": "Remove all node_modules recursively within child directories.",
+  "version": "0.0.0",
+  "author": "Kieran Holroyd",
+  "bin": {
+    "nodekill": "./bin/run"
+  },
+  "bugs": "https://github.com/kieranholroyd/nodekill/issues",
+  "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/plugin-help": "^3.2.0",
+    "@types/get-folder-size": "^2.0.0",
+    "get-folder-size": "^2.0.1",
+    "tslib": "^1.13.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.22.2",
+    "@types/node": "^14.11.2",
+    "eslint": "^5.16.0",
+    "eslint-config-oclif": "^3.1.0",
+    "eslint-config-oclif-typescript": "^0.1.0",
+    "globby": "^10.0.2",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.9.7"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/kieranholroyd/nodekill",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "nodekill",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "kieranholroyd/nodekill",
+  "scripts": {
+    "postpack": "rimraf oclif.manifest.json",
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prepack": "rimraf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
+}
