@@ -1,6 +1,6 @@
-/* eslint-disable no-warning-comments */
-/* eslint-disable no-console */
-/* eslint-disable max-depth */
+// export {run} from '@oclif/command'
+
+/* eslint-disable no-warning-comments, no-console, max-depth */
 import {Command, flags} from "@oclif/command"
 import * as fs from 'fs'
 import * as path from 'path'
@@ -19,27 +19,27 @@ interface FileInfo {
 
 // const isDebug = Boolean(process.env.DEBUG)
 
-export default class Execute extends Command {
+class Execute extends Command {
   module_path_list: FileInfo[] = [];
 
   counted = 0;
 
-  static description = "List & delete all node_modules we find inside [PATH]";
+  remove_vendor = false;
 
-  static examples = [
-    `$ nodekill execute ./
-[XX.X MB] C:\\Users\\me\\myFiles\\node_modules`,
-  ];
+  static description = "List & delete all (node_modules & vendor) folders within path.";
 
   static flags = {
-    path: flags.string({char: "p", default: "./", required: true}),
+    path: flags.string({char: "p", default: "./"}),
     help: flags.help({char: "h"}),
     depth: flags.integer({char: "d", default: 5}),
-    size: flags.boolean({char: "s", description: "Calculate Folder & Total Sizes (takes a minute)"}),
+    size: flags.boolean({char: "s", description: "calculate folder & total sizes (takes a minute)"}),
+    vendor: flags.boolean({description: "clean php composer too."}),
   };
 
-  async run() {
+  public async run() {
     const {flags} = this.parse(Execute)
+
+    this.remove_vendor = flags.vendor
 
     cli.action.start('Thinking', `Searching ${path.resolve(flags.path)} for the modules.`, {stdout: true})
     // if (isDebug) console.time("directory_search")
@@ -66,8 +66,8 @@ export default class Execute extends Command {
       return base
     }
 
+    cli.action.stop(`done.`)
     cli.table(this.module_path_list, tableColumnConfig())
-    cli.action.stop(`done. Run 'nodekill delete${flags.depth ? ' -d ' + flags.depth : ""} to delete all these folders`)
 
     // if (isDebug) console.timeEnd("build_table")
     let total = 0
@@ -93,7 +93,8 @@ export default class Execute extends Command {
         for await (const directory of dirs) {
           const full_path = path.resolve(search_path, directory.name)
           if (directory.isDirectory() && fs.existsSync(full_path)) {
-            if (directory.name === "node_modules") {
+            if (directory.name === "node_modules" ||
+              (this.remove_vendor && directory.name === "vendor")) {
               this.module_path_list.unshift({path: full_path, info: {size: 0}})
               return
             }
@@ -112,12 +113,17 @@ export default class Execute extends Command {
     const progression = cli.progress()
     progression.start(directories.length, 0)
     // cli.action.start(`deleting node_modules`, `Initialising`, {stdout: true})
-    for await (const dir of directories) {
-      // cli.action.start(`deleting node_modules`, `${dir.path} ${this.genDirSize(dir)}`, {stdout: true})
-
+    await Promise.all(directories.map(async dir => {
+      if (!fs.existsSync(dir.path)) return
       progression.increment()
       fs.rmdirSync(dir.path, {recursive: true})
-    }
+    }))
+    // for await (const dir of directories) {
+    //   // cli.action.start(`deleting node_modules`, `${dir.path} ${this.genDirSize(dir)}`, {stdout: true})
+
+    //   progression.increment()
+    //   fs.rmdirSync(dir.path, {recursive: true})
+    // }
     // cli.action.stop(`done`)
     progression.stop()
     return true
@@ -158,3 +164,5 @@ export default class Execute extends Command {
     // if (isDebug) console.timeEnd("full_size_calc")
   }
 }
+
+export = Execute;

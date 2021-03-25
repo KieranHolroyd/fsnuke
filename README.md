@@ -1,5 +1,4 @@
-nodekill
-========
+# nodekill
 
 Remove all node_modules recursively within child directories.
 
@@ -9,11 +8,15 @@ Remove all node_modules recursively within child directories.
 [![License](https://img.shields.io/npm/l/nodekill.svg)](https://github.com/kieranholroyd/nodekill/blob/master/package.json)
 
 <!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
+
 # Usage
+
 <!-- usage -->
+
 ```sh-session
 $ npm install -g nodekill
 $ nodekill COMMAND
@@ -25,11 +28,15 @@ USAGE
   $ nodekill COMMAND
 ...
 ```
+
 <!-- usagestop -->
+
 # Commands
+
 <!-- commands -->
-* [`nodekill hello [FILE]`](#nodekill-hello-file)
-* [`nodekill help [COMMAND]`](#nodekill-help-command)
+
+- [`nodekill hello [FILE]`](#nodekill-hello-file)
+- [`nodekill help [COMMAND]`](#nodekill-help-command)
 
 ## `nodekill hello [FILE]`
 
@@ -67,4 +74,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src\commands\help.ts)_
+
 <!-- commandsstop -->
