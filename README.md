@@ -38,6 +38,17 @@ OPTIONS
 
 <!-- usagestop -->
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
+_Build it yourself_
 
-<!-- commandsstop -->
+```sh
+$ git clone https://github.com/kieranholroyd/nodekill
+...
+$ cd nodekill
+$ npm install
+open another terminal
+Term1 $ npm run dev
+Term2 $ npm start -- NODEKILL ARGS
+```
+
+I suggest making a fake project with some small deps, and setting the --path argument while testing, the just run `npm install` to try again.
+This was thrown together in a few hours, when i needed to backup all my files and didn't have a huge amount of time, also windows fucking sucks at multi-threaded IO. this saved me like 6 hours of 1kb file transfers, be free.
