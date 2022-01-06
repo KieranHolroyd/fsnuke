@@ -33,19 +33,19 @@ class Execute extends Command {
     path: flags.string({
       description: "path to start recursion",
       char: "p",
-      default: "./"
+      default: "./",
     }),
     help: flags.help({ char: "h" }),
     depth: flags.integer({
       description: "directory recursion depth",
       char: "d",
-      default: 5
+      default: 5,
     }),
     size: flags.boolean({
       char: "s",
-      description: "calculate folder & total sizes (takes a minute)"
+      description: "calculate folder & total sizes (takes a minute)",
     }),
-    vendor: flags.boolean({ description: "clean php composer too." })
+    vendor: flags.boolean({ description: "clean php composer too." }),
   };
 
   public async run() {
@@ -66,7 +66,7 @@ class Execute extends Command {
 
     if (flags.size) {
       cli.action.start("Thinking", "Calculating size (might take a moment)", {
-        stdout: true
+        stdout: true,
       });
       await this.calculateSize();
     }
@@ -76,14 +76,14 @@ class Execute extends Command {
     const tableColumnConfig: () => table.Columns<FileInfo> = () => {
       const base: any = {
         path: {
-          header: `Folder path (${this.module_path_list.length} Items)`
-        }
+          header: `Folder path (${this.module_path_list.length} Items)`,
+        },
       };
       if (flags.size)
         base.size = {
           header: "Size on disk",
           get: (row: any) =>
-            this.genDirSize(row, row.info?.size < 1e7 ? "KB" : "MB")
+            this.genDirSize(row, row.info?.size < 1e7 ? "KB" : "MB"),
         };
       return base;
     };
@@ -141,7 +141,7 @@ class Execute extends Command {
             ) {
               this.module_path_list.unshift({
                 path: full_path,
-                info: { size: 0 }
+                info: { size: 0 },
               });
               return;
             }
@@ -154,7 +154,7 @@ class Execute extends Command {
           this.counted++;
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       this.log(`Error Occured: ${error.code} [DEBUG for info]`);
       this.debug(error);
     }
@@ -165,10 +165,10 @@ class Execute extends Command {
     progression.start(directories.length, 0);
     // cli.action.start(`deleting node_modules`, `Initialising`, {stdout: true})
     await Promise.all(
-      directories.map(async dir => {
+      directories.map(async (dir) => {
         if (!fs.existsSync(dir.path)) return;
         progression.increment();
-        fs.rmdirSync(dir.path, { recursive: true });
+        fs.rmSync(dir.path, { recursive: true });
       })
     );
     // for await (const dir of directories) {
@@ -207,7 +207,7 @@ class Execute extends Command {
       let folderSizeFull;
       try {
         folderSizeFull = await getFolderSize(fullFile.path);
-      } catch (error) {
+      } catch (error: any) {
         this.log(`Error Occured: ${error.code} [DEBUG for info]`);
         this.debug(error);
       }

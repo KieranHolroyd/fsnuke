@@ -13,11 +13,9 @@
     "@oclif/plugin-help": "^3.2.0",
     "@types/get-folder-size": "^2.0.0",
     "get-folder-size": "^2.0.1",
-    "tslib": "^1.13.0"
-  },
-  "devDependencies": {
+    "tslib": "^1.13.0",
     "@oclif/dev-cli": "^1.22.2",
-    "@types/node": "^14.11.2",
+    "@types/node": "^17.0.8",
     "eslint": "^5.16.0",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-oclif-typescript": "^0.1.0",
