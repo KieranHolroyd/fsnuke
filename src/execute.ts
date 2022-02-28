@@ -8,16 +8,18 @@ import cli from "cli-ux";
 import getFolderSizeCB from "get-folder-size";
 import util from "util";
 import { table } from "cli-ux/lib/styled/table";
-
-interface KVStore<V> {
-  [key: string]: V;
-}
-interface FileInfo {
-  path: string;
-  info: KVStore<any>;
-}
+import { FileInfo, FilesystemError } from "./types";
+import { opendir_error } from "./errors";
+import fastFolderSize from "fast-folder-size";
 
 // const isDebug = Boolean(process.env.DEBUG)
+function isValidError(x: any): x is Error {
+  return typeof x.message === "string";
+}
+
+function isFileError(x: any): x is FilesystemError {
+  return typeof x.errno === "number";
+}
 
 class Execute extends Command {
   module_path_list: FileInfo[] = [];
@@ -68,7 +70,9 @@ class Execute extends Command {
       cli.action.start("Thinking", "Calculating size (might take a moment)", {
         stdout: true,
       });
+      console.time("full_size_calc");
       await this.calculateSize();
+      console.timeEnd("full_size_calc");
     }
 
     // if (isDebug) console.time("build_table")
@@ -94,7 +98,7 @@ class Execute extends Command {
     // if (isDebug) console.timeEnd("build_table")
     let total = 0;
     for (const fullFile of this.module_path_list) {
-      total += fullFile.info.size;
+      if (fullFile.info.size) total += fullFile.info.size;
     }
     this.log(
       `Total: ${
@@ -154,9 +158,11 @@ class Execute extends Command {
           this.counted++;
         }
       }
-    } catch (error: any) {
-      this.log(`Error Occured: ${error.code} [DEBUG for info]`);
-      this.debug(error);
+    } catch (e) {
+      if (isValidError(e)) {
+        if (isFileError(e)) opendir_error(this, e);
+        this.debug(e);
+      }
     }
   }
 
@@ -201,15 +207,17 @@ class Execute extends Command {
 
   async calculateSize() {
     // if (isDebug) console.time("full_size_calc")
-    const getFolderSize = util.promisify(getFolderSizeCB);
+    const getFolderSize = util.promisify(fastFolderSize);
 
     for await (const fullFile of this.module_path_list) {
       let folderSizeFull;
       try {
         folderSizeFull = await getFolderSize(fullFile.path);
-      } catch (error: any) {
-        this.log(`Error Occured: ${error.code} [DEBUG for info]`);
-        this.debug(error);
+      } catch (error) {
+        if (isValidError(error)) {
+          if (isFileError(error)) opendir_error(this, error);
+          this.debug(error);
+        }
       }
       fullFile.info.size = folderSizeFull;
     }
