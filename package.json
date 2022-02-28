@@ -1,7 +1,7 @@
 {
   "name": "@ndkieran/nodekill",
   "description": "Remove all node_modules recursively within child directories.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Kieran Holroyd",
   "bin": {
     "nodekill": "./bin/run"
