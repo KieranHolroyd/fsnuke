@@ -5,7 +5,6 @@ import { Command, flags } from "@oclif/command";
 import * as fs from "fs";
 import * as path from "path";
 import cli from "cli-ux";
-import getFolderSizeCB from "get-folder-size";
 import util from "util";
 import { table } from "cli-ux/lib/styled/table";
 import { FileInfo, FilesystemError } from "./types";
