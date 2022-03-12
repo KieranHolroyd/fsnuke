@@ -1,6 +1,7 @@
 # FSNuke
 
-Remove all node_modules recursively within child directories.
+Filsystem Nuke. A tool to clean up `temp` files such as node_modules, bower_components, vendor and other temporary files.
+Useful for saving disk space from node modules, or any other bloated dependency folders that are not needed on inactive projects.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/fsnuke.svg)](https://npmjs.org/package/fsnuke)
@@ -12,7 +13,7 @@ Remove all node_modules recursively within child directories.
 - [fsnuke](#fsnuke)
 - [Usage](#usage)
 - [Commands](#commands)
-  <!-- tocstop -->
+<!-- tocstop -->
 
 # Usage
 
