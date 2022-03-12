@@ -22,17 +22,17 @@ Useful for saving disk space from node modules, or any other bloated dependency 
 ```sh-session
 $ npm install -g fsnuke
 $ fsnuke --help
-List & delete all (node_modules & vendor) folders within path.
+Filsystem Nuke. A tool to clean up `temp` files such as node_modules, bower_components, vendor and other temporary files.
 
 USAGE
   $ fsnuke
 
 OPTIONS
-  -d, --depth=depth  Search Folder Depth [default: 5]
+  -d, --depth=depth  [default: 5] directory recursion depth
   -h, --help         show CLI help
-  -p, --path=path    [default: ./]
+  -p, --path=path    [default: ./] path to start recursion
 
-  --vendor           clean php composer too.
+
 ```
 
 <!-- usagestop -->
