@@ -32,7 +32,7 @@ class Execute extends Command {
   remove_vendor = false;
 
   static description =
-    "List & delete all (node_modules & vendor) folders within path.";
+    "Filsystem Nuke. A tool to clean up `temp` files such as node_modules, bower_components, vendor and other temporary files.";
 
   static flags = {
     path: flags.string({
