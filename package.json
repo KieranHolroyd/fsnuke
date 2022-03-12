@@ -1,30 +1,32 @@
 {
-  "name": "@ndkieran/nodekill",
-  "description": "Remove all node_modules recursively within child directories.",
-  "version": "0.1.1",
-  "author": "Kieran Holroyd",
+  "name": "fsnuke",
+  "description": "Filsystem Nuke. A tool to clean up `temp` files such as node_modules, bower_components, vendor and other temporary files.",
+  "version": "0.1.0",
+  "author": "Kieran Holroyd <me@kieran.dev>",
   "bin": {
-    "nodekill": "./bin/run"
+    "fsnuke": "./bin/run"
   },
-  "bugs": "https://github.com/kieranholroyd/nodekill/issues",
+  "bugs": "https://github.com/kieranholroyd/fsnuke/issues",
   "dependencies": {
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
-    "@oclif/dev-cli": "^1.22.2",
     "@oclif/plugin-help": "^3.2.0",
+    "fast-folder-size": "^1.6.1",
+    "globby": "^10.0.2"
+  },
+  "devDependencies": {
     "@types/node": "^17.0.8",
+    "@oclif/dev-cli": "^1.22.2",
     "eslint": "^5.16.0",
     "eslint-config-oclif": "^3.1.0",
     "eslint-config-oclif-typescript": "^0.1.0",
-    "fast-folder-size": "^1.6.1",
-    "globby": "^10.0.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
     "tslib": "^1.13.0",
     "typescript": "^3.9.7"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.0.0"
   },
   "files": [
     "/bin",
@@ -32,7 +34,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/kieranholroyd/nodekill",
+  "homepage": "https://github.com/kieranholroyd/fsnuke",
   "keywords": [
     "oclif"
   ],
@@ -40,12 +42,12 @@
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "nodekill",
+    "bin": "fsnuke",
     "plugins": [
       "@oclif/plugin-help"
     ]
   },
-  "repository": "kieranholroyd/nodekill",
+  "repository": "kieranholroyd/fsnuke",
   "scripts": {
     "start": "node ./bin/run",
     "dev": "tsc -w",
