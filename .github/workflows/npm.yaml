@@ -6,7 +6,7 @@ on:
     tags:
       - "publish"
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,9 +20,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      - run: npm ci
       - uses: orta/npm-should-deploy-action@main
         id: check
+      - run: npm ci
+        if: ${{ steps.check.outputs.deploy == 'true' }}
       - run: npm publish
         if: ${{ steps.check.outputs.deploy == 'true' }}
         env:
