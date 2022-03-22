@@ -1,5 +1,5 @@
-import Execute from "./execute";
 import { FilesystemError } from "./types";
+import Execute from "../execute";
 
 export function opendir_error(cli_ref: Execute, e: FilesystemError) {
   switch (e.code) {
@@ -15,4 +15,12 @@ export function opendir_error(cli_ref: Execute, e: FilesystemError) {
       );
       throw e;
   }
+}
+
+export function isValidError(x: any): x is Error {
+  return typeof x.message === "string";
+}
+
+export function isFileError(x: any): x is FilesystemError {
+  return typeof x.errno === "number";
 }

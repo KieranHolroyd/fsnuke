@@ -2,27 +2,27 @@
 
 /* eslint-disable no-warning-comments, no-console, max-depth */
 import { Command, flags } from "@oclif/command";
+import cli from "cli-ux";
+import { table } from "cli-ux/lib/styled/table";
+import fastFolderSize from "fast-folder-size";
 import * as fs from "fs";
 import * as path from "path";
-import cli from "cli-ux";
-import util from "util";
-import { table } from "cli-ux/lib/styled/table";
-import { FileInfo, FilesystemError } from "./types";
-import { opendir_error } from "./errors";
-import fastFolderSize from "fast-folder-size";
-import { sync as delsync } from "rimraf";
 import { stdout } from "process";
+import { sync as delsync } from "rimraf";
+import util from "util";
+import {
+  isFileError,
+  isValidError,
+  opendir_error,
+} from "./libs/error_handling";
+import FileSize from "./libs/file_size";
+import { FileInfo } from "./libs/types";
 
+/* DEBUG OPTIONS */
 const isDebug = Boolean(process.env.DEBUG);
 const isVerbose = Boolean(process.env.VERBOSE);
-function isValidError(x: any): x is Error {
-  return typeof x.message === "string";
-}
 
-function isFileError(x: any): x is FilesystemError {
-  return typeof x.errno === "number";
-}
-
+/* CLI Entry Class */
 class Execute extends Command {
   module_path_list: FileInfo[] = [];
 
@@ -48,6 +48,7 @@ class Execute extends Command {
     }),
   };
 
+  /* CLI Entry function */
   public async run() {
     const { flags } = this.parse(Execute);
 
@@ -86,7 +87,7 @@ class Execute extends Command {
       };
       base.size = {
         header: "Size on disk",
-        get: (row: any) => this.readableSize(row.info?.size || 0),
+        get: (row: any) => new FileSize(row.info?.size || 0).readableSize(),
       };
       return base;
     };
@@ -94,12 +95,13 @@ class Execute extends Command {
     cli.action.stop(`done.`);
     cli.table(this.module_path_list, tableColumnConfig());
 
-    let total = 0;
+    let total: number | FileSize = 0;
     for (const fullFile of this.module_path_list) {
       if (fullFile.info.size) total += fullFile.info.size;
     }
+    total = new FileSize(total);
     this.log(
-      `Total: ${this.readableSize(total)} -- Searched ${this.counted.toFixed(
+      `Total: ${total.readableSize()} -- Searched ${this.counted.toFixed(
         0
       )} files -- Experienced ${this.errors.toFixed(0)} errors. ${
         this.errors > 0 ? "run with VERBOSE=true to view errors." : ""
@@ -115,7 +117,7 @@ class Execute extends Command {
       await this.execDirectoryDelete(this.module_path_list);
       this.log(
         `Completed, your node_modules have been cleaned${
-          " and you saved " + this.readableSize(total)
+          " and you saved " + total.readableSize()
         }`
       );
     } else {
@@ -158,9 +160,8 @@ class Execute extends Command {
       if (isVerbose && isValidError(e)) {
         if (isFileError(e)) opendir_error(this, e);
         if (!isFileError(e)) console.error(e);
-      } else {
-        this.countError();
       }
+      this.countError();
     }
   }
 
@@ -186,36 +187,36 @@ class Execute extends Command {
     return true;
   }
 
-  readableSize(size: number) {
-    let correct_size = 0,
-      unit = this.decideUnit(size);
+  // readableSize(size: number) {
+  //   let correct_size = 0,
+  //     unit = this.decideUnit(size);
 
-    switch (unit) {
-      case "TB":
-        correct_size = size / 1e12;
-        break;
-      case "GB":
-        correct_size = size / 1e9;
-        break;
-      case "MB":
-        correct_size = size / 1e6;
-        break;
-      case "KB":
-        correct_size = size / 1e3;
-        break;
-      default:
-        correct_size = size;
-    }
+  //   switch (unit) {
+  //     case "TB":
+  //       correct_size = size / 1e12;
+  //       break;
+  //     case "GB":
+  //       correct_size = size / 1e9;
+  //       break;
+  //     case "MB":
+  //       correct_size = size / 1e6;
+  //       break;
+  //     case "KB":
+  //       correct_size = size / 1e3;
+  //       break;
+  //     default:
+  //       correct_size = size;
+  //   }
 
-    return `[${correct_size.toFixed(1)} ${unit}]`;
-  }
+  //   return `[${correct_size.toFixed(1)} ${unit}]`;
+  // }
 
-  decideUnit(size: number) {
-    if (size < 1e6) return "KB";
-    if (size < 1e9) return "MB";
-    if (size < 1e12) return "GB";
-    return "TB";
-  }
+  // decideUnit(size: number) {
+  //   if (size < 1e6) return "KB";
+  //   if (size < 1e9) return "MB";
+  //   if (size < 1e12) return "GB";
+  //   return "TB";
+  // }
 
   async calculateSize() {
     const getFolderSize = util.promisify(fastFolderSize);

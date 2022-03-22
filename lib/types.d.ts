@@ -7,7 +7,7 @@ export interface FilesystemError extends Error {
 export interface KVStore<V> {
     [key: string]: V;
 }
-export interface FileInfo {
+export interface FileInfo extends Record<string, any> {
     path: string;
     info: KVStore<any>;
 }
