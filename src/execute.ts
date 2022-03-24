@@ -16,6 +16,7 @@ import {
   opendir_error,
 } from "./libs/error_handling";
 import FileSize from "./libs/file_size";
+import search_table from "./libs/search_table";
 import { FileInfo } from "./libs/types";
 
 /* DEBUG OPTIONS */
@@ -137,10 +138,7 @@ class Execute extends Command {
         for await (const directory of dirs) {
           const full_path = path.resolve(search_path, directory.name);
           if (directory.isDirectory() && fs.existsSync(full_path)) {
-            if (
-              directory.name === "node_modules" ||
-              directory.name === "vendor"
-            ) {
+            if (search_table.file_types.includes(directory.name)) {
               this.module_path_list.unshift({
                 path: full_path,
                 info: { size: 0 },
