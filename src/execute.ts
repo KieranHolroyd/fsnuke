@@ -275,7 +275,7 @@ class Execute extends Command {
    *
    *  expected console output:
    *  ```sh-session
-   *  function_name: 0.000ms
+   *  !DEBUG_TIMING! function_name: 0.000ms
    *  ```
    *
    * ---
