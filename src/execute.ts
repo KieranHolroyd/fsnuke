@@ -126,18 +126,39 @@ class Execute extends Command {
     }
   }
 
+  /**
+   * Recursively search for temporary directories
+   *
+   * If the given `search_path` is a directory, recurse into it & count directory as explored.
+   * Or if the given `search_path` is a file, do nothing.
+   * If the directory is a node_modules, bower_components, vendor or other temporary directory,
+   * add it to the list of directories to delete & return.
+   *
+   * If the `current_depth` is above the `max_depth`, return.
+   *
+   * @param {string} search_path The Folder to search
+   * @param {number} current_depth The current depth of the recursion
+   * @param {number} max_depth The maximum depth of the recursion
+   */
   async execDirectorySearch(
     search_path: string,
     current_depth: number,
     max_depth: number
-  ) {
+  ): Promise<void> {
     try {
+      // null check on `search_path` && verify current_depth is not greater than `max_depth`
       if (search_path && current_depth < max_depth) {
         const abs_path = path.resolve(search_path);
         const dirs = fs.opendirSync(abs_path);
+        // iterate over all `Dirent` objects in the given `search_path`
+        // fs.Dirent is a NodeJS object that represents a file or directory (or other filesystem primitives).
+        // https://nodejs.org/api/fs.html#class-fsdirent
         for await (const directory of dirs) {
           const full_path = path.resolve(search_path, directory.name);
+          // if the current `Dirent` is a directory, continue.
           if (directory.isDirectory() && fs.existsSync(full_path)) {
+            // Check if the directory is a location for temporary file storage.
+            // If it is, add it to the list of directories to delete. return.
             if (search_table.file_types.includes(directory.name)) {
               this.module_path_list.unshift({
                 path: full_path,
@@ -145,20 +166,24 @@ class Execute extends Command {
               });
               return;
             }
+            // if the current `Dirent` is a directory & not a temporary file storage location, recurse into it.
             await this.execDirectorySearch(
               path.resolve(full_path),
               current_depth + 1,
               max_depth
             );
           }
+          // Count the number of files explored.
           this.count();
         }
       }
     } catch (e) {
+      // Check if application is in verbose mode & the error is valid.
       if (isVerbose && isValidError(e)) {
-        if (isFileError(e)) opendir_error(this, e);
-        if (!isFileError(e)) console.error(e);
+        if (isFileError(e)) opendir_error(this, e); // handles filesystem errors
+        if (!isFileError(e)) console.error(e); // handles other valid errors
       }
+      // Count the number of errors.
       this.countError();
     }
   }
