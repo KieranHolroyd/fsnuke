@@ -1,7 +1,7 @@
 {
   "name": "fsnuke",
   "description": "Filsystem Nuke. A tool to clean up `temp` files such as node_modules, bower_components, vendor and other temporary files.",
-  "version": "0.2.4-1",
+  "version": "0.2.5",
   "author": "Kieran Holroyd <me@kieran.dev>",
   "bin": {
     "fsnuke": "./bin/run"
