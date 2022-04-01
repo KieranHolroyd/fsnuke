@@ -12,39 +12,24 @@ declare class Execute extends Command {
         depth: import("@oclif/parser/lib/flags").IOptionFlag<number>;
     };
     run(): Promise<void>;
+    /**
+     * Recursively search for temporary directories
+     *
+     * If the given `search_path` is a directory, recurse into it & count directory as explored.
+     * Or if the given `search_path` is a file, do nothing.
+     * If the directory is a node_modules, bower_components, vendor or other temporary directory,
+     * add it to the list of directories to delete & return.
+     *
+     * If the `current_depth` is above the `max_depth`, return.
+     *
+     * @param {string} search_path The Folder to search
+     * @param {number} current_depth The current depth of the recursion
+     * @param {number} max_depth The maximum depth of the recursion
+     */
     execDirectorySearch(search_path: string, current_depth: number, max_depth: number): Promise<void>;
     count(): void;
     countError(): void;
     execDirectoryDelete(directories: FileInfo[]): Promise<boolean>;
     calculateSize(): Promise<void>;
-    /** This is a debug function. enable with DEBUG=true before running fsnuke
-     *  to see the time it takes to run for a given function.
-     *
-     *  ```sh-session
-     * $ DEBUG=true node ./bin/run
-     * directory_search: 0.608ms
-     * full_size_calc: 0.218ms
-      ```
-     *
-     * ---
-     *  For example:
-     *  ```ts
-     *  this.timeIfTrue(isDebug, "function_name", this.function_name.bind(this), [args])
-     *  ```
-     *
-     *  expected console output:
-     *  ```sh-session
-     *  function_name: 0.000ms
-     *  ```
-     *
-     * ---
-     *
-     * @param condition - condition to check
-     * @param time_name used as `console.time(time_name)` and `console.timeEnd(time_name)`
-     * @param func Async Funtion to execute and time if condition is true. NOTE: if running with a fucntion inside a class pass as `this.my_function.bind(this)` to preserve `this` in the function.
-     * @param func_args Arguments to pass to the function (MUST BE ARRAY in order to be passed to function as `func(...func_args)`)
-     * @returns
-     */
-    timeIfTrue<T>(condition: boolean, time_name: string, func: (...args: any[]) => Promise<T>, func_args: any[]): Promise<T>;
 }
 export = Execute;
